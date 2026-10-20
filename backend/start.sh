@@ -11,7 +11,7 @@ if [ ! -d .venv ]; then
 fi
 
 echo
-echo "  软件开发全流程决策系统"
+echo "  AI 辅助实施配置交付系统"
 echo "  页面  http://127.0.0.1:8010/"
 echo "  文档  http://127.0.0.1:8010/docs"
 echo

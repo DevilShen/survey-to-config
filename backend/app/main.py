@@ -1,4 +1,4 @@
-"""软件开发全流程决策系统 · 后端入口。
+"""AI 辅助实施配置交付系统 · 后端入口。
 
 启动：  python run.py         （或 uvicorn app.main:app --reload）
 文档：  http://127.0.0.1:8000/docs
@@ -27,7 +27,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(
-    title="软件开发全流程决策系统 API",
+    title="AI 辅助实施配置交付系统 API",
     version="1.0.0",
     description="九个流程模块 + 四个决策专题。指标全部由原始记录现算，配置由规则引擎确定性推导。",
     lifespan=lifespan,
@@ -55,7 +55,7 @@ app.include_router(dialogue.router)
 @app.get("/api")
 def api_root():
     return {
-        "name": "软件开发全流程决策系统 API",
+        "name": "AI 辅助实施配置交付系统 API",
         "docs": "/docs",
         "endpoints": [
             "/api/bootstrap", "/api/overview", "/api/projects", "/api/modules/{key}",
