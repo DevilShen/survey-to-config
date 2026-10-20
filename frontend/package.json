@@ -1,0 +1,12 @@
+{
+  "name": "survey-to-config-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "问卷 → 81 条配置的前端交互回归（jsdom）。前端本身零构建，这里只装测试依赖。",
+  "scripts": {
+    "test": "node tests/config96.test.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "^30.0.0"
+  }
+}
