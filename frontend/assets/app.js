@@ -1,4 +1,4 @@
-/* 软件开发全流程决策系统 · 前端交互
+/* AI 辅助实施配置交付系统 · 前端交互
    纯前端演示：无后端，数据来自 data.js（内存 mock）。 */
 
 (function () {
@@ -1281,7 +1281,7 @@
       html = viewOverview(); crumb = '总览';
     }
 
-    $('#crumb').innerHTML = `<span>软件开发全流程决策系统</span><span class="sep">/</span><b>${crumb}</b>`;
+    $('#crumb').innerHTML = `<span>AI 辅助实施配置交付系统</span><span class="sep">/</span><b>${crumb}</b>`;
     view.innerHTML = html;
     view.scrollTop = scrollTop;
     if (pg && pg.mount) pg.mount();
@@ -1461,7 +1461,7 @@
   window.addEventListener('hashchange', render);
 
   async function boot() {
-    if (!location.hash) location.hash = '#/overview';
+    if (!location.hash) location.hash = '#/topic-config';
     paintSource();
     paintUser();
     bindUserMenu();
