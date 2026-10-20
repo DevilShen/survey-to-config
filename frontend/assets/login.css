@@ -1,0 +1,123 @@
+/* 登录页样式。与主系统的浅色体系一致的变量命名，独立成文件避免拖累 index 的首屏体积。 */
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --line:#e4e7ec; --line-strong:#cfd4dc;
+  --ink:#1b2430; --ink-2:#4a5568; --ink-3:#8a94a6; --ink-4:#aab3c0;
+  --blue-fg:#1c5fa8; --teal-bg:#e3f5ee; --teal-fg:#0f6e56;
+  --red-bg:#fcebeb; --red-fg:#a32d2d;
+  --r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+  font-size:13px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+.lg{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(420px,.95fr);height:100vh}
+
+/* ---------- 左侧品牌区 ---------- */
+.lg-brand{
+  position:relative;overflow:hidden;
+  background:linear-gradient(160deg,#141b24 0%,#1b2430 52%,#22303f 100%);
+  color:#fff;padding:56px 60px;display:flex;flex-direction:column;
+}
+.lg-brand::after{            /* 一条极淡的斜线光带，避免大块纯色发闷 */
+  content:"";position:absolute;right:-160px;top:-120px;width:520px;height:520px;
+  background:radial-gradient(circle at 30% 30%,rgba(120,180,255,.20),transparent 62%);
+  pointer-events:none;
+}
+.lg-brand .mark{display:flex;align-items:center;gap:10px;position:relative}
+.lg-brand .logo{
+  width:30px;height:30px;border-radius:8px;background:#fff;color:#1b2430;
+  display:grid;place-items:center;font-size:12.5px;font-weight:700;letter-spacing:-.03em;
+}
+.lg-brand .sysname{font-size:14px;font-weight:600;letter-spacing:.01em}
+.lg-brand h1{
+  font-size:34px;line-height:1.28;font-weight:600;letter-spacing:-.02em;
+  margin:auto 0 14px;position:relative;
+}
+.lg-brand h1 em{font-style:normal;color:#8fc8ff}
+.lg-brand .sub{color:#9fb0c2;font-size:13.5px;max-width:26em;position:relative}
+.lg-points{list-style:none;margin:30px 0 auto;display:grid;gap:12px;position:relative}
+.lg-points li{display:flex;gap:10px;color:#c8d4e0;font-size:13px;align-items:flex-start}
+.lg-points .dot{
+  width:5px;height:5px;border-radius:50%;background:#6fb4ff;margin-top:8px;flex:0 0 auto;
+}
+.lg-points b{color:#fff;font-weight:600}
+.lg-foot{
+  position:relative;display:flex;align-items:center;gap:8px;
+  color:#7c8b9b;font-size:11.5px;border-top:1px solid rgba(255,255,255,.1);padding-top:16px;
+}
+.lg-foot .pip{width:6px;height:6px;border-radius:50%;background:#3ecf8e}
+
+/* ---------- 右侧表单区 ---------- */
+.lg-main{display:grid;place-items:center;padding:40px}
+.lg-card{width:100%;max-width:352px}
+.lg-card h2{font-size:21px;font-weight:650;letter-spacing:-.01em}
+.lg-card .lead{color:var(--ink-3);font-size:12.5px;margin:6px 0 26px}
+
+.lg-field{margin-bottom:14px}
+.lg-field label{
+  display:block;font-size:12px;color:var(--ink-2);font-weight:550;margin-bottom:6px;
+}
+.lg-field input{
+  width:100%;height:40px;padding:0 12px;border:1px solid var(--line-strong);
+  border-radius:8px;background:#fff;font:inherit;color:var(--ink);
+  transition:border-color .14s,box-shadow .14s;
+}
+.lg-field input::placeholder{color:var(--ink-4)}
+.lg-field input:focus{
+  outline:none;border-color:#7aa7e0;box-shadow:0 0 0 3px rgba(28,95,168,.12);
+}
+.lg-field.bad input{border-color:#d98b8b;box-shadow:0 0 0 3px rgba(163,45,45,.1)}
+
+.lg-row{display:flex;align-items:center;justify-content:space-between;margin:2px 0 18px}
+.lg-rem{display:flex;align-items:center;gap:7px;color:var(--ink-2);font-size:12.5px;cursor:pointer}
+.lg-rem input{width:14px;height:14px;accent-color:#1b2430;cursor:pointer}
+.lg-row .tip{font-size:11.5px;color:var(--ink-4)}
+
+.lg-btn{
+  width:100%;height:42px;border-radius:8px;background:var(--ink);color:#fff;
+  font-size:13.5px;font-weight:600;letter-spacing:.01em;cursor:pointer;
+  transition:background .14s,transform .06s;
+}
+.lg-btn:hover{background:#2a3644}
+.lg-btn:active{transform:translateY(1px)}
+.lg-btn[disabled]{background:#8d96a3;cursor:not-allowed}
+
+.lg-err{
+  display:none;margin-top:14px;padding:9px 12px;border-radius:8px;
+  background:var(--red-bg);color:var(--red-fg);font-size:12.5px;
+}
+.lg-err.show{display:block}
+.lg-err.tip-only{background:#f2f4f7;color:var(--ink-2)}
+
+.lg-demo{
+  margin-top:22px;padding:13px 14px;border:1px dashed var(--line-strong);
+  border-radius:10px;background:#fbfcfd;
+}
+.lg-demo .hd{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:11.5px;color:var(--ink-3);letter-spacing:.04em;font-weight:600;
+  text-transform:uppercase;margin-bottom:8px;
+}
+.lg-demo .kv{display:flex;gap:16px;font-size:13px;color:var(--ink-2)}
+.lg-demo .kv b{color:var(--ink);font-weight:600}
+.lg-demo code{
+  background:#eef1f5;border-radius:4px;padding:1px 6px;font-size:12.5px;color:#22303f;
+}
+.lg-fill{
+  font-size:12px;color:var(--blue-fg);font-weight:600;cursor:pointer;
+  background:none;border:none;padding:0;
+}
+.lg-fill:hover{text-decoration:underline}
+
+.lg-note{margin-top:18px;font-size:11.5px;color:var(--ink-4);text-align:center}
+
+@media (max-width:900px){
+  .lg{grid-template-columns:1fr}
+  .lg-brand{display:none}
+  .lg-main{padding:28px}
+}

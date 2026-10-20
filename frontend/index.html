@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>软件开发全流程决策系统</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/style.css?v=20261020b">
+<script>
+  // 未登录不进业务页：放在 head 最前，避免页面先渲染一帧再跳走（会闪数据）
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('sdlc_token') || sessionStorage.getItem('sdlc_token'); } catch (e) {}
+    if (!t) {
+      location.replace('login.html?next=' +
+        encodeURIComponent(location.pathname + location.search + location.hash));
+    }
+  })();
+</script>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="mark">
+        <div class="logo">SD</div>
+        <h1>软件开发<br>全流程决策系统</h1>
+      </div>
+      <div class="ver" id="verLine">v1.1 · <em>DEMO</em> 连接中…</div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">
+      <span class="pulse"></span>
+      <span id="srcLine">数据源检测中…</span>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="btn sm" id="menuBtn" style="display:none">☰</button>
+      <div class="crumb" id="crumb"></div>
+      <div class="spacer"></div>
+      <div class="search">
+        <span>⌕</span>
+        <input placeholder="搜索项目 / 需求 / 变更单">
+      </div>
+      <div class="sel">
+        <select>
+          <option>全公司</option>
+          <option>交付一部</option>
+          <option>交付二部</option>
+        </select>
+      </div>
+      <div class="sel">
+        <select>
+          <option>近 30 天</option>
+          <option>本季度</option>
+          <option>本年</option>
+        </select>
+      </div>
+      <div class="avatar" id="avatar" title="账号">沈</div>
+    </header>
+
+    <div class="view" id="view"></div>
+  </main>
+</div>
+
+<script>
+window.__errs = [];
+window.addEventListener('error', function (e) {
+  window.__errs.push((e.message || '') + ' @' + String(e.filename || '').split('/').pop() + ':' + e.lineno);
+  console.error('[app]', e.message, e.filename, e.lineno);
+});
+window.addEventListener('unhandledrejection', function (e) {
+  window.__errs.push('REJECT ' + (e.reason && e.reason.message || e.reason));
+  console.error('[app] unhandled rejection', e.reason);
+});
+</script>
+<script src="assets/data.js?v=20261020b"></script>
+<script src="assets/api.js?v=20261020b"></script>
+<script src="assets/pricing.js?v=20261020b"></script>
+<script src="assets/survey96.js?v=20261020b"></script>
+<script src="assets/config96.js?v=20261020b"></script>
+<script src="assets/llmcfg.js?v=20261020b"></script>
+<script src="assets/app.js?v=20261020b"></script>
+<script>
+  // 小屏显示菜单按钮
+  (function(){
+    var btn = document.getElementById('menuBtn');
+    function sync(){ btn.style.display = window.innerWidth <= 900 ? 'inline-block' : 'none'; }
+    sync(); window.addEventListener('resize', sync);
+  })();
+</script>
+</body>
+</html>

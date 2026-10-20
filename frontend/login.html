@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录 · 软件开发全流程决策系统</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/login.css?v=20261020b">
+</head>
+<body>
+<div class="lg">
+
+  <aside class="lg-brand">
+    <div class="mark">
+      <div class="logo">SD</div>
+      <div class="sysname">软件开发全流程决策系统</div>
+    </div>
+
+    <h1>让每一个交付结论<br>都能<em>回溯到原始记录</em></h1>
+    <p class="sub">九个流程模块 · 四个决策专题。指标由原始人天与变更单现算，配置由规则引擎与模型双层推导。</p>
+
+    <ul class="lg-points">
+      <li><i class="dot"></i><span><b>指标现算</b>　CPI / EAC / 五项分解都从流水重算，不存结论字段</span></li>
+      <li><i class="dot"></i><span><b>同输入同输出</b>　配置指纹锁死，任何一条都能回溯到题号</span></li>
+      <li><i class="dot"></i><span><b>改动留痕</b>　写操作记审计，人工确认必须写理由</span></li>
+    </ul>
+
+    <div class="lg-foot">
+      <i class="pip"></i><span id="lgVer">v1.2 · 演示环境</span>
+    </div>
+  </aside>
+
+  <main class="lg-main">
+    <form class="lg-card" id="lgForm" autocomplete="on" novalidate>
+      <h2>登录</h2>
+      <p class="lead">使用项目账号进入决策系统</p>
+
+      <div class="lg-field" id="fUser">
+        <label for="lgUser">账号</label>
+        <input id="lgUser" name="username" type="text" placeholder="demo，或邮箱前缀"
+               autocomplete="username" autocapitalize="off" spellcheck="false" autofocus>
+      </div>
+
+      <div class="lg-field" id="fPass">
+        <label for="lgPass">密码</label>
+        <input id="lgPass" name="password" type="password" placeholder="请输入密码"
+               autocomplete="current-password">
+      </div>
+
+      <div class="lg-row">
+        <label class="lg-rem"><input type="checkbox" id="lgRemember" checked>记住登录</label>
+        <span class="tip">凭证 8 小时内有效</span>
+      </div>
+
+      <button type="submit" class="lg-btn" id="lgBtn">登录</button>
+      <div class="lg-err" id="lgErr"></div>
+
+      <div class="lg-demo">
+        <div class="hd"><span>演示账号</span>
+          <button type="button" class="lg-fill" id="lgFill">一键填入 →</button></div>
+        <div class="kv">
+          <span>账号 <code id="lgDemoUser">demo</code></span>
+          <span>密码 <code id="lgDemoPass">demo1234</code></span>
+        </div>
+      </div>
+
+      <p class="lg-note">登录即代表你了解：本系统为演示环境，数据为虚构样例。</p>
+    </form>
+  </main>
+</div>
+
+<script src="assets/login.js?v=20261020b"></script>
+</body>
+</html>
