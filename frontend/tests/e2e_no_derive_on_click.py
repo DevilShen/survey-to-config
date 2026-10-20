@@ -87,20 +87,40 @@ async def main() -> int:
                                                     "awaitPromise": True})
                 return r.get("result", {}).get("result", {}).get("value")
 
-            # 页面现在需要登录才能进：先换 JWT 写进 localStorage，再跳目标页。
-            # 账号密码由后端 /api/auth/demo 给出，脚本里不写死。
-            # 这里直接 call("Runtime.evaluate")——此刻 ev() 还没定义。
-            await call("Runtime.evaluate", {"expression": """(async function(){
-              const meta = await (await fetch('/api/auth/demo')).json();
-              const r = await fetch('/api/auth/login',{method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({username: meta.username, password: meta.password})});
-              const d = await r.json();
-              localStorage.setItem('sdlc_token', d.token);
-              return 'ok';
-            })()""", "awaitPromise": True})
+            # 等首帧加载完再换 token：headless 起得慢，origin 没就绪时相对路径 fetch 直接失败，
+            # 表现是「注入完 token 跳过去又被踢回登录页」。
+            for _ in range(80):
+                rr = await call("Runtime.evaluate", {"expression":
+                    "location.origin.indexOf('127.0.0.1')>=0 && document.readyState==='complete'",
+                    "returnByValue": True})
+                if rr.get("result", {}).get("result", {}).get("value"):
+                    break
+                await asyncio.sleep(0.25)
+
+            LOGIN_JS = """(async function(){
+              try {
+                const meta = await (await fetch('/api/auth/demo')).json();
+                const r = await fetch('/api/auth/login',{method:'POST',
+                  headers:{'Content-Type':'application/json'},
+                  body:JSON.stringify({username: meta.username, password: meta.password})});
+                const d = await r.json();
+                if (!d.token) return 'no-token:' + JSON.stringify(d).slice(0,80);
+                localStorage.setItem('sdlc_token', d.token);
+                return 'ok';
+              } catch (e) { return 'err:' + e.message; }
+            })()"""
+            got = None
+            for _ in range(20):
+                rr = await call("Runtime.evaluate", {"expression": LOGIN_JS,
+                                                    "returnByValue": True, "awaitPromise": True})
+                got = rr.get("result", {}).get("result", {}).get("value")
+                if got == 'ok':
+                    break
+                await asyncio.sleep(0.4)
+            if got != 'ok':
+                print('    [info] 登录注入返回值:', got, '（以页面是否挂载为准）')
             await call("Runtime.evaluate", {"expression": "location.replace(%s); 'x'" % json.dumps(URL)})
-            await asyncio.sleep(1.6)
+            await asyncio.sleep(1.2)
 
 
             # 先清掉可能残留的草稿，再从空表单开始
