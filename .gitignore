@@ -1,0 +1,32 @@
+# ---------- 运行数据与密钥（绝不能提交）----------
+# sqlite 库里有大模型 API Key 与登录凭证，.jwt_secret 是签发密钥
+backend/data/
+*.db
+*.db-wal
+*.db-shm
+.jwt_secret
+.env
+.env.*
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# ---------- Node（前端为原生 JS，测试依赖装在全局）----------
+node_modules/
+
+# ---------- 浏览器/CDP 测试遗留 ----------
+.tmp/
+frontend/tests/_shots/
+*.log
+
+# ---------- 编辑器与系统 ----------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

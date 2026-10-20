@@ -1,0 +1,14 @@
+* text=auto eol=lf
+
+# Windows 启动/批处理必须 CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# 二进制
+*.docx binary
+*.xlsx binary
+*.png binary
+*.jpg binary
+*.pdf binary
+*.db binary
