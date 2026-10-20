@@ -80,30 +80,33 @@ async def main() -> int:
 
             # 页面现在需要登录才能进：先换 JWT 写进 localStorage，再跳目标页。
             # 账号密码由后端 /api/auth/demo 给出，脚本里不写死。
-            # 这里直接 call("Runtime.evaluate")——此刻 ev() 还没定义。
-            await call("Runtime.evaluate", {"expression": """(async function(){
-              const meta = await (await fetch('/api/auth/demo')).json();
-              const r = await fetch('/api/auth/login',{method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({username: meta.username, password: meta.password})});
-              const d = await r.json();
-              localStorage.setItem('sdlc_token', d.token);
-              return 'ok';
-            })()""", "awaitPromise": True})
-            await call("Runtime.evaluate", {"expression": "location.replace(%s); 'x'" % json.dumps(URL)})
-            await asyncio.sleep(1.6)
-            # 页面现在需要登录才能进：先换 JWT 写进 localStorage，再跳目标页
-            # （登录接口本身不需要 token，所以在被踢到的 login.html 上也能调）
-            await ev("""(async function(){
-              const r = await fetch('/api/auth/login',{method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({username:'demo',password:'demo1234'})});
-              const d = await r.json();
-              localStorage.setItem('sdlc_token', d.token);
-              return 'ok';
-            })()""")
+            # 必须等首帧加载完再 fetch：headless 起得慢，origin 没就绪时相对路径会直接失败。
+            for _ in range(80):
+                if await ev("location.origin.indexOf('127.0.0.1')>=0 && document.readyState==='complete'"):
+                    break
+                await asyncio.sleep(0.25)
+
+            login_js = """(async function(){
+              try {
+                const meta = await (await fetch('/api/auth/demo')).json();
+                const r = await fetch('/api/auth/login',{method:'POST',
+                  headers:{'Content-Type':'application/json'},
+                  body:JSON.stringify({username: meta.username, password: meta.password})});
+                const d = await r.json();
+                if (!d.token) return 'no-token:' + JSON.stringify(d).slice(0,80);
+                localStorage.setItem('sdlc_token', d.token);
+                return 'ok';
+              } catch (e) { return 'err:' + e.message; }
+            })()"""
+            got = None
+            for _ in range(20):
+                got = await ev(login_js)
+                if got == 'ok':
+                    break
+                await asyncio.sleep(0.4)
+            print('    登录:', got)
             await ev("location.replace(%s); 'x'" % json.dumps(URL))
-            await asyncio.sleep(1.6)
+            await asyncio.sleep(1.2)
             await call("Page.enable")
 
 

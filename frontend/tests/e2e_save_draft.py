@@ -104,18 +104,6 @@ async def main() -> int:
             })()""", "awaitPromise": True})
             await call("Runtime.evaluate", {"expression": "location.replace(%s); 'x'" % json.dumps(URL)})
             await asyncio.sleep(1.6)
-            # 页面现在需要登录才能进：先换 JWT 写进 localStorage，再跳目标页
-            # （登录接口本身不需要 token，所以在被踢到的 login.html 上也能调）
-            await ev("""(async function(){
-              const r = await fetch('/api/auth/login',{method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({username:'demo',password:'demo1234'})});
-              const d = await r.json();
-              localStorage.setItem('sdlc_token', d.token);
-              return 'ok';
-            })()""")
-            await ev("location.replace(%s); 'x'" % json.dumps(URL))
-            await asyncio.sleep(1.6)
 
 
             async def wait_idle(rounds=600):   # AI 推导逐组调模型，约 60-90 秒
