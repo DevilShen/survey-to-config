@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>软件开发全流程决策系统 · 架构图解 v1.0</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --line:#e4e7ec; --line-strong:#cfd4dc;
+    --ink:#1b2430; --ink-2:#4a5568; --ink-3:#8a94a6;
+    --blue-bg:#e8f1fb; --blue-fg:#1c5fa8;
+    --amber-bg:#faeeda; --amber-fg:#8a5208;
+    --teal-bg:#e3f5ee; --teal-fg:#0f6e56;
+    --violet-bg:#eeedfe; --violet-fg:#4b43a8;
+    --gray-bg:#f1efe8; --gray-fg:#5f5e5a;
+    --red-bg:#fcebeb; --red-fg:#a32d2d;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+    padding:32px 20px 64px;
+  }
+  .wrap{max-width:1120px;margin:0 auto}
+
+  header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:26px}
+  .eyebrow{font-size:12px;letter-spacing:.12em;color:var(--ink-3);text-transform:uppercase;margin-bottom:8px}
+  h1{font-size:27px;font-weight:650;letter-spacing:-.01em;margin-bottom:8px}
+  .sub{font-size:14px;color:var(--ink-2);max-width:760px}
+  .meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:12.5px;color:var(--ink-3)}
+  .meta span::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--line-strong);margin-right:7px;vertical-align:2px}
+
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:34px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+  .kpi b{display:block;font-size:24px;font-weight:660;letter-spacing:-.02em;line-height:1.2}
+  .kpi small{display:block;font-size:12px;color:var(--ink-3);margin-top:3px}
+
+  section{margin-bottom:44px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+  .sec-no{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums;letter-spacing:.08em}
+  h2{font-size:18.5px;font-weight:640;letter-spacing:-.005em}
+  .sec-desc{font-size:13.5px;color:var(--ink-2);margin:2px 0 16px 34px;max-width:820px}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 20px}
+  svg{display:block;width:100%;height:auto}
+  .cap{font-size:12px;color:var(--ink-3);margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
+
+  /* 四分法矩阵 */
+  .matrix{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .q{border:1px solid var(--line);border-radius:8px;padding:14px 15px;background:#fff}
+  .q .tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-bottom:8px}
+  .q h4{font-size:14px;font-weight:620;margin-bottom:5px}
+  .q p{font-size:12.5px;color:var(--ink-2);margin-bottom:7px}
+  .q .row{font-size:12px;color:var(--ink-3);display:flex;gap:6px}
+  .q .row b{color:var(--ink-2);font-weight:550;min-width:52px}
+  .axis-note{font-size:12px;color:var(--ink-3);margin-top:10px;text-align:center}
+
+  /* 管道 */
+  .pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-bottom:14px}
+  .step{border:1px solid var(--line);border-radius:8px;padding:13px 14px;background:#fff;position:relative}
+  .step:not(:last-child)::after{content:"→";position:absolute;right:-19px;top:50%;transform:translateY(-50%);color:var(--line-strong);font-size:14px;line-height:1}
+  .step .n{font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .step h4{font-size:13.5px;font-weight:620;margin:3px 0 5px}
+  .step p{font-size:12px;color:var(--ink-2)}
+  .outs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .out{border:1px dashed var(--line-strong);border-radius:8px;padding:11px 13px;background:#fcfcfd}
+  .out b{font-size:12.5px;display:block;margin-bottom:2px}
+  .out span{font-size:11.5px;color:var(--ink-3)}
+  .out.flag{border-color:var(--red-fg);background:var(--red-bg);border-style:solid}
+  .out.flag b{color:var(--red-fg)}
+
+  footer{border-top:1px solid var(--line);padding-top:22px;margin-top:8px}
+  .concl{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+  .cc{background:#fff;border:1px solid var(--line);border-left:3px solid var(--blue-fg);border-radius:6px;padding:13px 15px}
+  .cc b{display:block;font-size:13px;margin-bottom:4px}
+  .cc p{font-size:12.5px;color:var(--ink-2)}
+  .foot{font-size:11.5px;color:var(--ink-3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  @media (max-width:860px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .matrix,.pipe,.outs,.concl{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">SDLC Decision System · Architecture Overview</div>
+    <h1>软件开发全流程决策系统</h1>
+    <p class="sub">把散落在项目管理、代码仓库、工单、工时、财务里的过程数据统一起来，回答四个问题：成本为什么超、需求为什么返工、客户到底在抱怨什么、新客户怎么快速配起来。</p>
+    <div class="meta">
+      <span>架构设计说明书 v1.0</span>
+      <span>2026-10-18</span>
+      <span>适用：20–300 人研发交付团队</span>
+    </div>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi"><b>9</b><small>业务模块</small></div>
+    <div class="kpi"><b>6</b><small>架构分层</small></div>
+    <div class="kpi"><b>4</b><small>AI 决策专题</small></div>
+    <div class="kpi"><b>5</b><small>偏差分解项</small></div>
+    <div class="kpi"><b>8</b><small>返工诱因类</small></div>
+  </div>
+
+  <!-- 1. 九模块闭环 -->
+  <section id="sec1">
+    <div class="sec-head"><span class="sec-no">01</span><h2>九模块闭环：三条回写链路决定系统是否有效</h2></div>
+    <p class="sec-desc">九个模块不是九个看板，而是一条带反馈的链。任一回写链路断裂，系统就退化为事后统计工具。</p>
+    <div class="panel">
+      <svg viewBox="0 0 1040 380" role="img" aria-label="九模块闭环流程图">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#8a94a6"/>
+          </marker>
+          <marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#4b43a8"/>
+          </marker>
+        </defs>
+
+        <!-- 上排 -->
+        <g font-family="system-ui,-apple-system,'Microsoft YaHei',sans-serif">
+          <rect x="35" y="30" width="170" height="64" rx="7" fill="#e8f1fb" stroke="#b6d2ee"/>
+          <text x="120" y="55" text-anchor="middle" font-size="14" font-weight="600" fill="#1c5fa8">市场洞察</text>
+          <text x="120" y="74" text-anchor="middle" font-size="11.5" fill="#4a5568">丢单原因 · 需求缺口</text>
+
+          <rect x="235" y="30" width="170" height="64" rx="7" fill="#faeeda" stroke="#edcf9a"/>
+          <text x="320" y="55" text-anchor="middle" font-size="14" font-weight="600" fill="#8a5208">成本评估</text>
+          <text x="320" y="74" text-anchor="middle" font-size="11.5" fill="#4a5568">三档报价 · 修正系数</text>
+
+          <rect x="435" y="30" width="170" height="64" rx="7" fill="#e3f5ee" stroke="#a8dbcb"/>
+          <text x="520" y="55" text-anchor="middle" font-size="14" font-weight="600" fill="#0f6e56">需求记录</text>
+          <text x="520" y="74" text-anchor="middle" font-size="11.5" fill="#4a5568">8 字段 · 决策链</text>
+
+          <rect x="635" y="30" width="170" height="64" rx="7" fill="#e3f5ee" stroke="#a8dbcb"/>
+          <text x="720" y="55" text-anchor="middle" font-size="14" font-weight="600" fill="#0f6e56">研发排期</text>
+          <text x="720" y="74" text-anchor="middle" font-size="11.5" fill="#4a5568">容量 × 速率 × 阻塞</text>
+
+          <rect x="835" y="30" width="170" height="64" rx="7" fill="#eeedfe" stroke="#c9c6f2"/>
+          <text x="920" y="55" text-anchor="middle" font-size="14" font-weight="600" fill="#4b43a8">成本执行</text>
+          <text x="920" y="74" text-anchor="middle" font-size="11.5" fill="#4a5568">CPI · EAC · 预警</text>
+
+          <!-- 上排箭头 -->
+          <line x1="205" y1="62" x2="231" y2="62" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+          <line x1="405" y1="62" x2="431" y2="62" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+          <line x1="605" y1="62" x2="631" y2="62" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+          <line x1="805" y1="62" x2="831" y2="62" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+
+          <!-- 需求变更（跨行节点） -->
+          <rect x="435" y="140" width="170" height="52" rx="7" fill="#fcebeb" stroke="#eec2c2"/>
+          <text x="520" y="162" text-anchor="middle" font-size="13.5" font-weight="600" fill="#a32d2d">需求变更</text>
+          <text x="520" y="180" text-anchor="middle" font-size="11.5" fill="#4a5568">5 字段留痕 · 计价</text>
+
+          <!-- 虚线：需求记录 ↔ 变更 -->
+          <path d="M520,94 L520,136" stroke="#4b43a8" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ar2)"/>
+          <text x="530" y="120" font-size="10.5" fill="#4b43a8">发起</text>
+          <!-- 虚线：变更 → 成本执行（回写成本） -->
+          <path d="M605,166 C700,166 760,150 920,98" stroke="#4b43a8" stroke-width="1.2" stroke-dasharray="4 3" fill="none" marker-end="url(#ar2)"/>
+          <text x="690" y="188" font-size="10.5" fill="#4b43a8">回写人天 / 排期冲击</text>
+
+          <!-- 下排 -->
+          <rect x="835" y="250" width="170" height="64" rx="7" fill="#f1efe8" stroke="#d9d5c8"/>
+          <text x="920" y="275" text-anchor="middle" font-size="14" font-weight="600" fill="#5f5e5a">部署实施</text>
+          <text x="920" y="294" text-anchor="middle" font-size="11.5" fill="#4a5568">问卷 · 配置 · 流程图</text>
+
+          <rect x="635" y="250" width="170" height="64" rx="7" fill="#f1efe8" stroke="#d9d5c8"/>
+          <text x="720" y="275" text-anchor="middle" font-size="14" font-weight="600" fill="#5f5e5a">售后运维</text>
+          <text x="720" y="294" text-anchor="middle" font-size="11.5" fill="#4a5568">四分法 · 主题簇</text>
+
+          <rect x="435" y="250" width="170" height="64" rx="7" fill="#f1efe8" stroke="#d9d5c8"/>
+          <text x="520" y="275" text-anchor="middle" font-size="14" font-weight="600" fill="#5f5e5a">用户反馈</text>
+          <text x="520" y="294" text-anchor="middle" font-size="11.5" fill="#4a5568">假设卡 · 候选池打分</text>
+
+          <!-- 右侧向下 -->
+          <path d="M920,94 L920,246" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+          <!-- 下排向左 -->
+          <line x1="831" y1="282" x2="809" y2="282" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+          <line x1="631" y1="282" x2="609" y2="282" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+          <!-- 回到市场洞察 -->
+          <path d="M435,282 L120,282 L120,98" stroke="#8a94a6" stroke-width="1.3" fill="none" marker-end="url(#ar)"/>
+          <text x="250" y="300" font-size="10.5" fill="#8a94a6">回流：下一版本规划</text>
+
+          <!-- 三条回写链路标注 -->
+          <text x="35" y="352" font-size="11.5" fill="#8a94a6">L1 成本闭环：实际 → 估算基准修正</text>
+          <text x="355" y="352" font-size="11.5" fill="#8a94a6">L2 变更闭环：返工诱因 → 经验卡 → 评审召回</text>
+          <text x="720" y="352" font-size="11.5" fill="#8a94a6">L3 产品闭环：问题结构 → 候选池</text>
+        </g>
+      </svg>
+      <div class="cap">实线为主流程，虚线为跨模块回写。L1 决定报价是否会越来越准，L2 决定同一个坑会不会踩第二次，L3 决定版本规划是否由证据驱动。</div>
+    </div>
+  </section>
+
+  <!-- 2. 六层架构 -->
+  <section id="sec2">
+    <div class="sec-head"><span class="sec-no">02</span><h2>六层架构：语义抽取层为什么必须单列</h2></div>
+    <p class="sec-desc">软件交付的过程数据约 70% 是文本。禁止模型参与就没有输入，放任模型参与就没有可信数字。解法是把模型关进一层：它唯一的写入口是带 schema 的标签表。</p>
+    <div class="panel">
+      <svg viewBox="0 0 1040 430" role="img" aria-label="六层架构图">
+        <defs>
+          <marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#cfd4dc"/>
+          </marker>
+        </defs>
+        <g font-family="system-ui,-apple-system,'Microsoft YaHei',sans-serif">
+          <!-- 层条 -->
+          <rect x="40" y="20" width="760" height="56" rx="6" fill="#eeedfe" stroke="#c9c6f2"/>
+          <text x="60" y="44" font-size="13.5" font-weight="640" fill="#4b43a8">第六层 · Agent 交互层</text>
+          <text x="60" y="63" font-size="11.5" fill="#4a5568">自然语言提问 · 多步工具调用 · 归因解释 · 报告生成 · 经验沉淀</text>
+          <text x="820" y="52" font-size="11" fill="#8a94a6">WorkBuddy</text>
+
+          <rect x="40" y="88" width="760" height="56" rx="6" fill="#e8f1fb" stroke="#b6d2ee"/>
+          <text x="60" y="112" font-size="13.5" font-weight="640" fill="#1c5fa8">第五层 · 决策服务层（MCP）</text>
+          <text x="60" y="131" font-size="11.5" fill="#4a5568">鉴权 · 口径封装 · 计算执行 · 偏差分解 · 配置推导 · 审计</text>
+          <text x="820" y="120" font-size="11" fill="#8a94a6">自建</text>
+
+          <rect x="40" y="156" width="760" height="56" rx="6" fill="#e3f5ee" stroke="#a8dbcb"/>
+          <text x="60" y="180" font-size="13.5" font-weight="640" fill="#0f6e56">第四层 · 指标与标签语义层</text>
+          <text x="60" y="199" font-size="11.5" fill="#4a5568">33 项指标公式 · 口径版本 · 标签体系 · 双口径对照</text>
+          <text x="820" y="188" font-size="11" fill="#8a94a6">自建</text>
+
+          <rect x="40" y="224" width="760" height="56" rx="6" fill="#f1efe8" stroke="#d9d5c8"/>
+          <text x="60" y="248" font-size="13.5" font-weight="640" fill="#5f5e5a">第三层 · 事实仓（ODS/DWD/DWS/ADS）</text>
+          <text x="60" y="267" font-size="11.5" fill="#4a5568">项目 · 工时 · 需求 · 变更 · 缺陷 · 工单 · 发布 · 财务 · 配置</text>
+          <text x="820" y="256" font-size="11" fill="#8a94a6">DuckDB → PG</text>
+
+          <!-- 语义抽取层：高亮 -->
+          <rect x="40" y="292" width="760" height="62" rx="6" fill="#fff" stroke="#a32d2d" stroke-width="1.6"/>
+          <text x="60" y="316" font-size="13.5" font-weight="660" fill="#a32d2d">2.5 层 · 语义抽取层（LLM 唯一写入口）</text>
+          <text x="60" y="336" font-size="11.5" fill="#4a5568">文本 → 标签 · 置信度强制 · 人工可校正 · 模型版本留痕 · 月度回评</text>
+          <rect x="700" y="302" width="86" height="20" rx="10" fill="#fcebeb"/>
+          <text x="743" y="316" text-anchor="middle" font-size="10.5" fill="#a32d2d">不可复现环节</text>
+          <text x="820" y="328" font-size="11" fill="#8a94a6">自建 · 评测驱动</text>
+
+          <rect x="40" y="366" width="760" height="48" rx="6" fill="#f6f7f9" stroke="#e4e7ec"/>
+          <text x="60" y="388" font-size="13.5" font-weight="640" fill="#1b2430">第一层 · 源系统</text>
+          <text x="60" y="405" font-size="11.5" fill="#4a5568">Jira/禅道 · GitLab · CI/CD · 缺陷库 · 工单 · CRM · 工时 · 财务 · 问卷</text>
+          <text x="820" y="394" font-size="11" fill="#8a94a6">只读接入</text>
+
+          <!-- 右侧数据流箭头 -->
+          <line x1="920" y1="366" x2="920" y2="42" stroke="#cfd4dc" stroke-width="1.4" marker-end="url(#ar3)"/>
+          <text x="932" y="150" font-size="11" fill="#8a94a6">业务语义</text>
+          <text x="932" y="166" font-size="11" fill="#8a94a6">工具调用</text>
+          <text x="932" y="182" font-size="11" fill="#8a94a6">（JSON）</text>
+        </g>
+      </svg>
+      <div class="cap">禁止跳层：决策服务层不向 Agent 暴露原始明细，也不提供 run_sql。所有进入模型上下文的数据已是带口径的终值。</div>
+    </div>
+  </section>
+
+  <!-- 3. 偏差分解 -->
+  <section id="sec3">
+    <div class="sec-head"><span class="sec-no">03</span><h2>成本偏差五项分解：超支 40% 不是结论</h2></div>
+    <p class="sec-desc">大多数组织把超支归因为「估算不准」，于是投入做更精细的估算模型——但估算偏差通常只占 10%–20%。只盯估算精度，最多解决五分之一的问题。</p>
+    <div class="panel">
+      <svg viewBox="0 0 1040 250" role="img" aria-label="成本偏差五项分解堆叠条">
+        <g font-family="system-ui,-apple-system,'Microsoft YaHei',sans-serif">
+          <!-- 顶部对照（按 1 人天 = 3.33px 等比） -->
+          <text x="30" y="26" font-size="12" fill="#8a94a6">估算 120 人天</text>
+          <text x="600" y="26" font-size="12" fill="#8a94a6">实际 168 人天（+40%）</text>
+          <rect x="30" y="32" width="400" height="7" rx="3.5" fill="#cfd4dc"/>
+          <rect x="30" y="46" width="560" height="7" rx="3.5" fill="#1b2430"/>
+
+          <!-- 堆叠条：48 人天 = 700px -->
+          <text x="30" y="76" font-size="12" font-weight="600" fill="#4a5568">超支 48 人天构成</text>
+          <rect x="30" y="88" width="320.8" height="42" fill="#1c5fa8"/>
+          <rect x="350.8" y="88" width="204.2" height="42" fill="#c98a1e"/>
+          <rect x="555" y="88" width="175" height="42" fill="#0f6e56"/>
+
+          <text x="190" y="114" text-anchor="middle" font-size="12.5" font-weight="620" fill="#fff">范围偏差 22 人天</text>
+          <text x="453" y="114" text-anchor="middle" font-size="12.5" font-weight="620" fill="#fff">返工 14</text>
+          <text x="642" y="114" text-anchor="middle" font-size="12.5" font-weight="620" fill="#fff">净效率损失 12</text>
+
+          <!-- 标注 -->
+          <text x="190" y="148" text-anchor="middle" font-size="11.5" fill="#4a5568">45.8% · 3 张变更单（2 张已计价）</text>
+          <text x="453" y="148" text-anchor="middle" font-size="11.5" fill="#4a5568">29.2% · 2 条需求二次开发</text>
+          <text x="642" y="148" text-anchor="middle" font-size="11.5" fill="#4a5568">25.0% · 新人/环境/切换</text>
+
+          <!-- 其余两项 -->
+          <rect x="30" y="170" width="330" height="46" rx="6" fill="#fcfcfd" stroke="#e4e7ec" stroke-dasharray="4 3"/>
+          <text x="46" y="190" font-size="12" font-weight="600" fill="#8a94a6">等待与阻塞 · 0 人天</text>
+          <text x="46" y="207" font-size="11" fill="#a32d2d">data_gap：无阻塞记录，实际可能被低估</text>
+
+          <rect x="378" y="170" width="300" height="46" rx="6" fill="#fcfcfd" stroke="#e4e7ec" stroke-dasharray="4 3"/>
+          <text x="394" y="190" font-size="12" font-weight="600" fill="#8a94a6">估算基线偏差 · 0 人天</text>
+          <text x="394" y="207" font-size="11" fill="#4a5568">残差项：本次估算本身无误</text>
+
+          <!-- 闭合校验 -->
+          <rect x="696" y="170" width="314" height="46" rx="6" fill="#e3f5ee" stroke="#a8dbcb"/>
+          <text x="712" y="190" font-size="12" font-weight="640" fill="#0f6e56">闭合校验 · 通过</text>
+          <text x="712" y="207" font-size="11" fill="#4a5568">五项之和 48 = 总偏差 48，误差 0% ≤ 5%</text>
+        </g>
+      </svg>
+      <div class="cap">结论：可改进的不是「报得更准」，而是返工控制（29%）与效率损失来源（25%）。闭合校验失败时，系统不输出占比，只输出缺口清单——不给假精确。</div>
+    </div>
+  </section>
+
+  <!-- 4. 需求演进链 -->
+  <section id="sec4">
+    <div class="sec-head"><span class="sec-no">04</span><h2>需求是一条线，不是一个点</h2></div>
+    <p class="sec-desc">需求状态机（待评审→开发中→完成）无法表达真实情况：同一条需求可能分三次交付，第三次才对。线路图的作用是让「为什么改三次、每次多花多少」变得可查。</p>
+    <div class="panel">
+      <svg viewBox="0 0 1040 260" role="img" aria-label="需求演进链">
+        <g font-family="system-ui,-apple-system,'Microsoft YaHei',sans-serif">
+          <text x="30" y="26" font-size="13" font-weight="640" fill="#1b2430">REQ-2317 多级审批流 · 交付 3 次 / 跨 4 个月 / 累计 34 人天</text>
+          <line x1="60" y1="120" x2="980" y2="120" stroke="#cfd4dc" stroke-width="1.5"/>
+          <line x1="170" y1="104" x2="170" y2="113" stroke="#cfd4dc" stroke-width="1"/>
+          <line x1="470" y1="104" x2="470" y2="113" stroke="#cfd4dc" stroke-width="1"/>
+          <line x1="770" y1="104" x2="770" y2="113" stroke="#cfd4dc" stroke-width="1"/>
+
+          <!-- rev 1.0 -->
+          <circle cx="170" cy="120" r="7" fill="#1c5fa8"/>
+          <rect x="80" y="48" width="180" height="56" rx="6" fill="#e8f1fb" stroke="#b6d2ee"/>
+          <text x="170" y="70" text-anchor="middle" font-size="12.5" font-weight="620" fill="#1c5fa8">rev 1.0 · 两级审批</text>
+          <text x="170" y="88" text-anchor="middle" font-size="11" fill="#4a5568">v3.2 交付 · 估 12 / 实 14</text>
+          <text x="170" y="142" text-anchor="middle" font-size="11" fill="#8a94a6">第 1 月</text>
+
+          <!-- rev 2.0 -->
+          <circle cx="470" cy="120" r="7" fill="#c98a1e"/>
+          <rect x="380" y="48" width="180" height="56" rx="6" fill="#faeeda" stroke="#edcf9a"/>
+          <text x="470" y="70" text-anchor="middle" font-size="12.5" font-weight="620" fill="#8a5208">rev 2.0 · 金额分级三级</text>
+          <text x="470" y="88" text-anchor="middle" font-size="11" fill="#4a5568">v3.4 交付 · 估 10 / 实 12</text>
+          <text x="470" y="142" text-anchor="middle" font-size="11" fill="#8a94a6">第 2 月</text>
+
+          <!-- rev 3.0 -->
+          <circle cx="770" cy="120" r="7" fill="#0f6e56"/>
+          <rect x="680" y="48" width="180" height="56" rx="6" fill="#e3f5ee" stroke="#a8dbcb"/>
+          <text x="770" y="70" text-anchor="middle" font-size="12.5" font-weight="620" fill="#0f6e56">rev 3.0 · 增加会签</text>
+          <text x="770" y="88" text-anchor="middle" font-size="11" fill="#4a5568">v3.6 交付 · 估 12 / 实 8</text>
+          <text x="770" y="142" text-anchor="middle" font-size="11" fill="#8a94a6">第 4 月</text>
+
+          <!-- 诱因标签 -->
+          <rect x="380" y="176" width="180" height="26" rx="13" fill="#fcebeb"/>
+          <text x="470" y="193" text-anchor="middle" font-size="11" fill="#a32d2d">C1 需求不完备</text>
+          <rect x="680" y="176" width="180" height="26" rx="13" fill="#fcebeb"/>
+          <text x="770" y="193" text-anchor="middle" font-size="11" fill="#a32d2d">C3 验收标准缺失</text>
+
+          <path d="M470,202 L470,140" stroke="#eec2c2" stroke-width="1.1" stroke-dasharray="3 3"/>
+          <path d="M770,202 L770,140" stroke="#eec2c2" stroke-width="1.1" stroke-dasharray="3 3"/>
+
+          <!-- 经验卡输出 -->
+          <rect x="60" y="216" width="940" height="32" rx="6" fill="#fcfcfd" stroke="#e4e7ec"/>
+          <text x="76" y="237" font-size="11.5" fill="#4a5568">→ 沉淀经验卡 LC-2026-018：评审必问「升级依据 / 阈值 / 是否跨级 / 是否会签」，命中 12 次、采纳 7 次、有效确认 5 次，有效期至 2027-04</text>
+        </g>
+      </svg>
+      <div class="cap">关键约束：revision 必须由 PM 工具状态流转自动生成。人工补录只能作冷启动，且单列统计——否则线路图会变成第二次回忆录。</div>
+    </div>
+  </section>
+
+  <!-- 5. 四分法 -->
+  <section id="sec5">
+    <div class="sec-head"><span class="sec-no">05</span><h2>「咨询多」是粗信号，必须拆成四类</h2></div>
+    <p class="sec-desc">四类指向完全不同的动作与成本量级。如果 70 条咨询里 60 条是「不会用/找不到」，正确答案是改引导（2 人天），不是重构（200 人天）。</p>
+    <div class="panel">
+      <div class="matrix">
+        <div class="q">
+          <span class="tag" style="background:var(--blue-bg);color:var(--blue-fg)">A · 功能存在</span>
+          <h4>不会用</h4>
+          <p>「这个审批怎么发起」「规则怎么设」——功能有，客户不知道怎么做。</p>
+          <div class="row"><b>指向</b>引导 / 文档 / 培训</div>
+          <div class="row"><b>成本</b>低（约 1–3 人天）</div>
+          <div class="row"><b>动作</b>加即时引导、改文案、补帮助中心</div>
+        </div>
+        <div class="q">
+          <span class="tag" style="background:var(--amber-bg);color:var(--amber-fg)">B · 功能存在</span>
+          <h4>找不到</h4>
+          <p>「哪里能导出」——功能有，入口藏太深或命名不是客户的语言。</p>
+          <div class="row"><b>指向</b>信息架构</div>
+          <div class="row"><b>成本</b>低–中（约 2–5 人天）</div>
+          <div class="row"><b>动作</b>调入口层级、统一命名</div>
+        </div>
+        <div class="q">
+          <span class="tag" style="background:var(--red-bg);color:var(--red-fg)">C · 功能存在</span>
+          <h4>理解错</h4>
+          <p>「为什么我改这里那边也变了」——客户的心智模型与产品模型不一致。</p>
+          <div class="row"><b>指向</b>概念模型</div>
+          <div class="row"><b>成本</b>高（10 人天起）</div>
+          <div class="row"><b>动作</b>改交互反馈 / 加约束提示，改文案通常无效</div>
+        </div>
+        <div class="q">
+          <span class="tag" style="background:var(--teal-bg);color:var(--teal-fg)">D · 功能不存在</span>
+          <h4>确实缺</h4>
+          <p>「能不能按项目核算」——功能没有，属于产品能力缺口。</p>
+          <div class="row"><b>指向</b>产品能力</div>
+          <div class="row"><b>成本</b>按需求评估</div>
+          <div class="row"><b>动作</b>进候选池，走 RICE + 风险修正打分</div>
+        </div>
+      </div>
+      <div class="axis-note">分母陷阱：必须用「咨询率 = 咨询数 ÷ 使用次数」，而不是咨询数——否则会把用得最多、最成功的模块误判成最失败的模块去重构。</div>
+    </div>
+  </section>
+
+  <!-- 6. 配置推导 -->
+  <section id="sec6">
+    <div class="sec-head"><span class="sec-no">06</span><h2>SaaS 初始化：AI 理解与呈现，配置由代码确定性推导</h2></div>
+    <p class="sec-desc">同一份问卷重跑两次，配置必须完全一致。做不到这一点，任何「模型生成配置」的方案都不能用于生产——配置错一位就是事故，且往往两周后才暴露。</p>
+    <div class="panel">
+      <div class="pipe">
+        <div class="step"><div class="n">01</div><h4>问卷（分支题库）</h4><p>按套餐/行业走分支，单份 ≤ 40 题，用客户业务语言提问</p></div>
+        <div class="step"><div class="n">02</div><h4>答案体检</h4><p>完整性 / 交叉冲突 / 数值缺失，一次性列追问清单</p></div>
+        <div class="step"><div class="n">03</div><h4>规则推导</h4><p>答案 → 组织/角色/权限/流程/字段，规则有 ID 有单测有版本</p></div>
+        <div class="step"><div class="n">04</div><h4>三件套输出</h4><p>流程图由配置生成 DSL 渲染，与配置永不脱节</p></div>
+      </div>
+      <div class="outs">
+        <div class="out"><b>① 流程图</b><span>主干横向、分支纵向；每个节点标来源题号</span></div>
+        <div class="out"><b>② 配置清单</b><span>按系统录入顺序组织，标三态：已确认 / 默认值 / 待确认</span></div>
+        <div class="out flag"><b>③ 待确认清单</b><span>冲突与缺失项，标明「影响哪个配置」，阻塞项优先</span></div>
+      </div>
+      <div class="cap">A/B/C 三类的共同点是「功能存在，但客户用不起来」——这决定了改引导还是改模型；只有 D 类是真正的产品缺口。示例冲突：Q18 金额阈值填 5000，但 Q22 审批层级填 1 级 → 审批流节点数不确定，标阻塞。系统不自动补全，也不猜客户意图。</div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="concl">
+      <div class="cc"><b>技术不是难点</b><p>六层里只有语义抽取层需要一点工程判断，其余是常规数仓与接口工作。</p></div>
+      <div class="cc"><b>两条组织前提</b><p>工时打到任务级并区分返工；变更留痕并写清原因。缺一条，系统只能输出漂亮的废话。</p></div>
+      <div class="cc"><b>顺序不能反</b><p>前提不具备时，正确做法是先做流程改造。先建系统的结果，是花钱做一个更精致的糊涂账。</p></div>
+    </div>
+    <div class="foot">
+      <span>软件开发全流程决策系统 · 架构设计说明书 v1.0 · 2026-10-18</span>
+      <span>配套文档：软件开发全流程决策系统_架构设计_v1.0.md（16 章 / 1845 行）</span>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

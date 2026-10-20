@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="380" viewBox="0 0 1040 380" role="img" aria-label="九模块闭环流程图">
+        <rect x="0" y="0" width="1040" height="380" fill="#ffffff"/>
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#8a94a6"/>
+          </marker>
+          <marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#4b43a8"/>
+          </marker>
+        </defs>
+
+        <!-- 上排 -->
+        <g font-family="system-ui,-apple-system,'Microsoft YaHei',sans-serif">
+          <rect x="35" y="30" width="170" height="64" rx="7" fill="#e8f1fb" stroke="#b6d2ee"/>
+          <text x="120" y="55" text-anchor="middle" font-size="14" font-weight="600" fill="#1c5fa8">市场洞察</text>
+          <text x="120" y="74" text-anchor="middle" font-size="11.5" fill="#4a5568">丢单原因 · 需求缺口</text>
+
+          <rect x="235" y="30" width="170" height="64" rx="7" fill="#faeeda" stroke="#edcf9a"/>
+          <text x="320" y="55" text-anchor="middle" font-size="14" font-weight="600" fill="#8a5208">成本评估</text>
+          <text x="320" y="74" text-anchor="middle" font-size="11.5" fill="#4a5568">三档报价 · 修正系数</text>
+
+          <rect x="435" y="30" width="170" height="64" rx="7" fill="#e3f5ee" stroke="#a8dbcb"/>
+          <text x="520" y="55" text-anchor="middle" font-size="14" font-weight="600" fill="#0f6e56">需求记录</text>
+          <text x="520" y="74" text-anchor="middle" font-size="11.5" fill="#4a5568">8 字段 · 决策链</text>
+
+          <rect x="635" y="30" width="170" height="64" rx="7" fill="#e3f5ee" stroke="#a8dbcb"/>
+          <text x="720" y="55" text-anchor="middle" font-size="14" font-weight="600" fill="#0f6e56">研发排期</text>
+          <text x="720" y="74" text-anchor="middle" font-size="11.5" fill="#4a5568">容量 × 速率 × 阻塞</text>
+
+          <rect x="835" y="30" width="170" height="64" rx="7" fill="#eeedfe" stroke="#c9c6f2"/>
+          <text x="920" y="55" text-anchor="middle" font-size="14" font-weight="600" fill="#4b43a8">成本执行</text>
+          <text x="920" y="74" text-anchor="middle" font-size="11.5" fill="#4a5568">CPI · EAC · 预警</text>
+
+          <!-- 上排箭头 -->
+          <line x1="205" y1="62" x2="231" y2="62" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+          <line x1="405" y1="62" x2="431" y2="62" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+          <line x1="605" y1="62" x2="631" y2="62" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+          <line x1="805" y1="62" x2="831" y2="62" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+
+          <!-- 需求变更（跨行节点） -->
+          <rect x="435" y="140" width="170" height="52" rx="7" fill="#fcebeb" stroke="#eec2c2"/>
+          <text x="520" y="162" text-anchor="middle" font-size="13.5" font-weight="600" fill="#a32d2d">需求变更</text>
+          <text x="520" y="180" text-anchor="middle" font-size="11.5" fill="#4a5568">5 字段留痕 · 计价</text>
+
+          <!-- 虚线：需求记录 ↔ 变更 -->
+          <path d="M520,94 L520,136" stroke="#4b43a8" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ar2)"/>
+          <text x="530" y="120" font-size="10.5" fill="#4b43a8">发起</text>
+          <!-- 虚线：变更 → 成本执行（回写成本） -->
+          <path d="M605,166 C700,166 760,150 920,98" stroke="#4b43a8" stroke-width="1.2" stroke-dasharray="4 3" fill="none" marker-end="url(#ar2)"/>
+          <text x="690" y="188" font-size="10.5" fill="#4b43a8">回写人天 / 排期冲击</text>
+
+          <!-- 下排 -->
+          <rect x="835" y="250" width="170" height="64" rx="7" fill="#f1efe8" stroke="#d9d5c8"/>
+          <text x="920" y="275" text-anchor="middle" font-size="14" font-weight="600" fill="#5f5e5a">部署实施</text>
+          <text x="920" y="294" text-anchor="middle" font-size="11.5" fill="#4a5568">问卷 · 配置 · 流程图</text>
+
+          <rect x="635" y="250" width="170" height="64" rx="7" fill="#f1efe8" stroke="#d9d5c8"/>
+          <text x="720" y="275" text-anchor="middle" font-size="14" font-weight="600" fill="#5f5e5a">售后运维</text>
+          <text x="720" y="294" text-anchor="middle" font-size="11.5" fill="#4a5568">四分法 · 主题簇</text>
+
+          <rect x="435" y="250" width="170" height="64" rx="7" fill="#f1efe8" stroke="#d9d5c8"/>
+          <text x="520" y="275" text-anchor="middle" font-size="14" font-weight="600" fill="#5f5e5a">用户反馈</text>
+          <text x="520" y="294" text-anchor="middle" font-size="11.5" fill="#4a5568">假设卡 · 候选池打分</text>
+
+          <!-- 右侧向下 -->
+          <path d="M920,94 L920,246" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+          <!-- 下排向左 -->
+          <line x1="831" y1="282" x2="809" y2="282" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+          <line x1="631" y1="282" x2="609" y2="282" stroke="#8a94a6" stroke-width="1.3" marker-end="url(#ar)"/>
+          <!-- 回到市场洞察 -->
+          <path d="M435,282 L120,282 L120,98" stroke="#8a94a6" stroke-width="1.3" fill="none" marker-end="url(#ar)"/>
+          <text x="250" y="300" font-size="10.5" fill="#8a94a6">回流：下一版本规划</text>
+
+          <!-- 三条回写链路标注 -->
+          <text x="35" y="352" font-size="11.5" fill="#8a94a6">L1 成本闭环：实际 → 估算基准修正</text>
+          <text x="355" y="352" font-size="11.5" fill="#8a94a6">L2 变更闭环：返工诱因 → 经验卡 → 评审召回</text>
+          <text x="720" y="352" font-size="11.5" fill="#8a94a6">L3 产品闭环：问题结构 → 候选池</text>
+        </g>
+      </svg>

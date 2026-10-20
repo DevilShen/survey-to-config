@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>市场报价 Agent · 大模型接入目标态（方案原型）</title>
+<style>
+/* 设计变量与现有系统保持一致（frontend/assets/style.css） */
+:root{
+  --bg:#f6f7f9; --card:#fff; --ink:#1b2430; --ink-2:#3d4756; --ink-3:#6b7686; --ink-4:#98a1ad;
+  --line:#e4e7eb; --violet:#6f5bd0; --violet-bg:#f2effc; --teal:#0e9f6e; --teal-bg:#e6f7f0;
+  --amber:#b7791f; --amber-bg:#fdf5e6; --red:#c53030; --red-bg:#fdecec;
+  --r:12px; --r-sm:8px; --shadow:0 1px 2px rgba(20,28,40,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:13px/1.6 -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:1500px;margin:0 auto;padding:18px 22px 40px}
+.banner{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.banner h1{font-size:17px;font-weight:700}
+.tag{font-size:10.5px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--ink-3)}
+.tag.proto{background:var(--amber-bg);color:var(--amber);border-color:#f0e0c0}
+.tag.sse{background:var(--violet-bg);color:var(--violet);border-color:#ddd3f5}
+.note{font-size:11px;color:var(--ink-3);margin-bottom:14px}
+.note b{color:var(--ink-2)}
+.layout{display:grid;grid-template-columns:250px 1fr 420px;gap:14px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.card-h{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--line)}
+.card-h h3{font-size:12.5px;font-weight:640}
+.sub{font-size:10.5px;color:var(--ink-4)}
+/* 左：需求池 */
+.pool{display:flex;flex-direction:column}
+.pool-i{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--line);
+  padding:10px 14px;cursor:pointer;font:inherit}
+.pool-i:hover{background:#fafbfc}
+.pool-i.on{background:var(--violet-bg);box-shadow:inset 2px 0 0 var(--violet)}
+.pool-i b{display:block;font-size:12px;font-weight:640}
+.pool-i .p-meta{font-size:10px;color:var(--ink-4);margin-top:2px}
+.badge{display:inline-block;font-size:9.5px;padding:1px 7px;border-radius:99px;font-weight:600}
+.b-red{background:var(--red-bg);color:var(--red)} .b-amber{background:var(--amber-bg);color:var(--amber)}
+.b-teal{background:var(--teal-bg);color:var(--teal)} .b-violet{background:var(--violet-bg);color:var(--violet)}
+/* 中：对话流 */
+.chat{height:640px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:82%;padding:9px 12px;border-radius:12px;font-size:12px;line-height:1.7;position:relative}
+.msg.user{align-self:flex-end;background:var(--violet);color:#fff;border-bottom-right-radius:4px}
+.msg.bot{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
+.who{font-size:9.5px;color:var(--ink-4);margin:0 2px -4px}
+.who.r{text-align:right}
+.cursor::after{content:"▍";color:var(--violet);animation:blink .8s infinite}
+@keyframes blink{50%{opacity:0}}
+.qcard{align-self:stretch;background:#fff;border:1px solid var(--line);border-left:3px solid var(--amber);
+  border-radius:var(--r-sm);padding:10px 12px}
+.qcard .q-h{font-size:10px;color:var(--amber);font-weight:640;margin-bottom:5px;display:flex;justify-content:space-between}
+.qcard .q-t{font-size:12px;font-weight:600;margin-bottom:3px}
+.qcard .q-w{font-size:10.5px;color:var(--ink-3)}
+.qcard .opts{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.qcard .opts button{font-size:11px;padding:3px 10px;border-radius:99px;border:1px solid var(--line);
+  background:#fff;cursor:pointer;font:inherit}
+.qcard .opts button:hover{border-color:var(--violet);color:var(--violet)}
+.xcard{align-self:stretch;background:var(--teal-bg);border:1px solid #c3ead9;border-radius:var(--r-sm);padding:9px 12px}
+.xcard .x-h{font-size:10px;color:var(--teal);font-weight:640;margin-bottom:4px}
+.chip{display:inline-flex;gap:5px;align-items:center;background:#fff;border:1px solid #c3ead9;border-radius:6px;
+  padding:2px 8px;font-size:10.5px;margin:2px 3px 0 0}
+.chip b{color:var(--ink)} .chip span{color:var(--ink-3)}
+.chip.mid{border-color:#f0e0c0;background:#fffdf6}
+.progress{align-self:stretch;background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 12px}
+.progress .p-h{font-size:10px;color:var(--violet);font-weight:640;margin-bottom:5px}
+.pline{font-size:11px;color:var(--ink-3);padding:2px 0;display:flex;gap:8px;align-items:center}
+.pline i{width:6px;height:6px;border-radius:50%;background:var(--line);flex:none}
+.pline.done i{background:var(--teal)} .pline.done{color:var(--ink-2)}
+.pline.run i{background:var(--violet);animation:blink 1s infinite}
+.pline.loop{color:var(--amber)} .pline.loop i{background:var(--amber)}
+.quote{align-self:stretch;background:#fff;border:1px solid var(--line);border-left:3px solid var(--teal);
+  border-radius:var(--r-sm);padding:12px 14px}
+.quote .q-no{font-size:10px;color:var(--ink-4)}
+.quote .q-price{font-size:22px;font-weight:720;margin:2px 0}
+.quote .q-price small{font-size:11px;color:var(--ink-3);font-weight:400}
+.q-row{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-3);padding:2px 0;border-top:1px dashed var(--line)}
+/* 右：trace */
+.trace{height:640px;overflow-y:auto;padding:10px 12px}
+.node{border:1px solid var(--line);border-radius:var(--r-sm);padding:7px 10px;margin-bottom:6px;background:#fff}
+.node .n-h{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:640}
+.node .n-k{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;color:var(--ink-4)}
+.node .n-s{font-size:10.5px;color:var(--ink-3);margin-top:3px}
+.kind{font-size:9px;padding:0 5px;border-radius:4px;font-weight:640;letter-spacing:.5px}
+.k-code{background:#eef0f3;color:var(--ink-3)} .k-llm{background:var(--violet-bg);color:var(--violet)}
+.k-gate{background:var(--amber-bg);color:var(--amber)} .k-human{background:var(--red-bg);color:var(--red)}
+.loop-mark{font-size:9px;color:var(--amber)}
+.playbar{display:flex;gap:10px;align-items:center;margin-bottom:14px}
+.btn{font-size:12px;padding:7px 16px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;font:inherit;font-weight:600}
+.btn.primary{background:var(--violet);color:#fff;border-color:var(--violet)}
+.btn:disabled{opacity:.45;cursor:default}
+.step-info{font-size:11px;color:var(--ink-3)}
+@media(max-width:1150px){.layout{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="banner">
+    <h1>市场报价 Agent · 大模型接入目标态</h1>
+    <span class="tag proto">方案原型 · 未接入后端</span>
+    <span class="tag sse">SSE 流式 · 对话驱动闭环</span>
+  </div>
+  <div class="note">
+    本页是《优化方案 v1.0》配套的<b>目标态静态原型</b>：点「播放演示」看一条模糊需求如何经过
+    <b>对话式追问 → 槽位自动抽取 → 自动重跑 → 出报价单</b>。
+    右侧 trace 里 <span class="kind k-llm">LLM</span> 表示该节点有模型参与（对话/话术/抽取），
+    <span class="kind k-code">CODE</span> 表示纯代码计算——<b>所有数字都由 CODE 节点产出</b>。
+  </div>
+  <div class="playbar">
+    <button class="btn primary" id="play">▶ 播放演示</button>
+    <button class="btn" id="reset">重置</button>
+    <span class="step-info" id="stepInfo">演示案例：星野数字 QR-2026-002（原文只有 80 字，缺规模 / 模式 / 交期 / 预算）</span>
+  </div>
+  <div class="layout">
+    <!-- 左：需求池 -->
+    <div class="card">
+      <div class="card-h"><h3>需求池</h3><span class="sub">6 条</span></div>
+      <div class="pool" id="pool"></div>
+    </div>
+    <!-- 中：对话流 -->
+    <div class="card">
+      <div class="card-h"><h3>报价对话</h3><span class="sub">SSE 流式 · turn 可断线补拉</span></div>
+      <div class="chat" id="chat"></div>
+    </div>
+    <!-- 右：trace -->
+    <div class="card">
+      <div class="card-h"><h3>推理过程（18 阶段）</h3><span class="sub">LLM / CODE 徽标 = 哪步有模型参与</span></div>
+      <div class="trace" id="trace"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 静态演示数据（与方案文档口径一致） ============ */
+const POOL = [
+  ['QR-2026-006','中远新材','制造 · 预算 80 万','待推理',''],
+  ['QR-2026-005','悦邻商业','零售 · 36.4 万','已出价','b-teal'],
+  ['QR-2026-004','正弘法务','服务 · 待补参数','待补充','b-amber'],
+  ['QR-2026-003','康泰医疗','医疗 · 毛利 5.5%','毛利不足','b-red'],
+  ['QR-2026-002','星野数字','科技 · 演示中','推理中','b-violet'],
+  ['QR-2026-001','华辰控股','制造 · 93.3 万','已出价','b-teal'],
+];
+
+/* 节点静态定义；kind: code=纯代码 / llm=模型参与 / gate=判定 / human=人工 */
+const STAGES = [
+  ['S01','需求输入','code','原文 80 字入池'],
+  ['S02','Agent 推理层','code','装载规则版本 w_v3 / 客户档案 / 检索库'],
+  ['S03','需求理解与拆解','llm','LLM 辅助口语拆解 → 7 槽位（schema 校验）'],
+  ['S04','关键词提取','code','词典词 ×3 + 双字组 ×1 + IDF'],
+  ['S05','明确度判断','gate','加权覆盖率 54% < 60% → 不进检索'],
+  ['S06','反向追问','llm','LLM 生成自然话术，4 条追问（2 阻塞）'],
+  ['S07','多维检索','code','hybrid：dense(bge) + sparse → RRF'],
+  ['S08','结果融合','code','加权 RRF，归一化'],
+  ['S09','候选方案 Top4','code','模块覆盖率模糊对齐'],
+  ['S10','置信度评估','gate','62.6% < 70% → 调参重检'],
+  ['S11','调整检索参数','code','放开行业过滤 / 阈值 0.18→0.12 / 召回 6→8'],
+  ['S12','需求相似度匹配','code','主参考：中远新材 · 供应商协同门户'],
+  ['S13','定价规则引擎','code','三规则独立出价 89.0 / 125.8 / 121.9 万'],
+  ['S14','多规则融合','code','分歧 29% > 20% → 取中位数，标需商务判断'],
+  ['S15','利润率校验','gate','35.5% ≥ 15% → 放行'],
+  ['S16','重新评估','code','缩范围分支可执行：砍最低覆盖模块回 S13（本轮未触发）'],
+  ['S17','生成报价单','code','报价单 Q-xxx，三档报价'],
+  ['S18','人工复核','human','AI 出建议价与依据，签字的人负责'],
+];
+
+const KIND_LABEL = {code:['k-code','CODE'],llm:['k-llm','LLM'],gate:['k-gate','GATE'],human:['k-human','HUMAN']};
+
+/* ============ 渲染骨架 ============ */
+function renderPool(){
+  document.getElementById('pool').innerHTML = POOL.map((p,i)=>
+    `<button class="pool-i ${p[0]==='QR-2026-002'?'on':''}">
+      <b>${p[1]} <span class="badge ${p[4]||''}" ${p[4]?'':'style="border:1px solid var(--line);color:var(--ink-4)"'}>${p[3]}</span></b>
+      <span class="p-meta">${p[0]} · ${p[2]}</span></button>`).join('');
+}
+function renderTrace(upTo, loopSet){
+  document.getElementById('trace').innerHTML = STAGES.map((s,i)=>{
+    const [cls,lab] = KIND_LABEL[s[2]];
+    const done = i < upTo;
+    const loop = loopSet && loopSet.has('S0'+(i+1));
+    return `<div class="node" style="${done?'':'opacity:.42'}">
+      <div class="n-h"><span class="n-k">${s[0]}</span>${s[1]}
+        <span class="kind ${cls}">${lab}</span>
+        ${loop?'<span class="loop-mark">↺ 第 2 轮</span>':''}</div>
+      <div class="n-s">${s[3]}</div></div>`;
+  }).join('');
+}
+function scrollChat(){ const c=document.getElementById('chat'); c.scrollTop=c.scrollHeight; }
+function scrollTrace(){ const t=document.getElementById('trace'); t.scrollTop=t.scrollHeight; }
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+
+/* 模拟 SSE delta 逐字输出 */
+async function typeBot(text, cps=26){
+  const chat = document.getElementById('chat');
+  chat.insertAdjacentHTML('beforeend','<div class="who">报价 Agent</div><div class="msg bot"><span class="body"></span></div>');
+  const body = chat.lastElementChild.querySelector('.body');
+  body.parentElement.classList.add('cursor');
+  for (let i=0;i<text.length;i++){
+    body.textContent += text[i];
+    if (i%3===0) scrollChat();
+    await sleep(1000/cps*3);
+  }
+  body.parentElement.classList.remove('cursor');
+  scrollChat();
+}
+function userMsg(text){
+  const chat=document.getElementById('chat');
+  chat.insertAdjacentHTML('beforeend',`<div class="who r">客户经理</div><div class="msg user">${text}</div>`);
+  scrollChat();
+}
+function html(html){ const chat=document.getElementById('chat'); chat.insertAdjacentHTML('beforeend',html); scrollChat(); }
+
+/* ============ 演示脚本（对应方案 §4 L-A 闭环 + §5 SSE 事件序列） ============ */
+let playing=false;
+async function play(){
+  if (playing) return; playing=true;
+  document.getElementById('play').disabled=true;
+  const info=t=>document.getElementById('stepInfo').textContent=t;
+
+  reset(); await sleep(400);
+
+  // ① 需求进入，第一轮跑到 S06 停下
+  info('① 原文入池 → 跑流水线 → 明确度 54% < 60%，停在 S06');
+  userMsg('我们想把官网和线索池打通，做一个销售线索的分级和自动分配，最好能跟企业微信同步。');
+  await sleep(700);
+  renderTrace(6); scrollTrace();
+  await typeBot('收到。要给出可签字的报价，我还需要补 4 个参数，其中 2 个必须答——其余两条你可以先放着，我按假设跑。');
+  await sleep(300);
+  html(`<div class="qcard"><div class="q-h">追问 1/4 · 阻塞 <span>event: question</span></div>
+        <div class="q-t">系统预计覆盖多少用户？峰值并发大概多少？</div>
+        <div class="q-w">规模决定权限模型与查询策略，影响人天 ±8–15%</div>
+        <div class="opts"><button>500 人以内</button><button>500–1000 人</button><button>1000 人以上</button></div></div>`);
+  await sleep(600);
+  html(`<div class="qcard"><div class="q-h">追问 2/4 · 阻塞 <span>event: question</span></div>
+        <div class="q-t">按标准产品做配置，还是接受一定程度的定制开发？</div>
+        <div class="q-w">标准配置与定制交付的成本结构不同，影响报价 ±12%</div>
+        <div class="opts"><button>标准配置</button><button>定制交付</button></div></div>`);
+  await sleep(500);
+  html(`<div class="qcard"><div class="q-h">追问 3–4/4 · 非阻塞（可跳过，按假设跑） <span>event: question</span></div>
+        <div class="q-t">期望上线时间？预算区间？</div>
+        <div class="q-w">缺省按「2027-Q2 / 不设预算」假设</div></div>`);
+
+  // ② 用户自由回答 → LLM 抽取
+  await sleep(900);
+  info('② 客户经理自由回答 → LLM 抽取槽位（evidence 必须原文子串）');
+  userMsg('大概八百人用，标准配置就行，明年二季度上线，预算七十万左右');
+  await sleep(500);
+  html(`<div class="xcard"><div class="x-h">槽位抽取 · event: extract ×4</div>
+      <span class="chip"><b>使用规模 = 800 人</b><span>置信 0.95 ✓</span></span>
+      <span class="chip"><b>交付模式 = 标准配置</b><span>置信 0.91 ✓</span></span>
+      <span class="chip"><b>交期 = 2027-Q2</b><span>置信 0.93 ✓</span></span>
+      <span class="chip"><b>预算 = 70 万</b><span>置信 0.90 ✓</span></span>
+      <div style="font-size:10px;color:var(--ink-3);margin-top:5px">4 项全部 ≥0.8，自动写入；若落在 0.5–0.8 会先生成确认句，绝不直接写</div></div>`);
+
+  // ③ 自动重跑：SSE stage 事件逐条推
+  await sleep(700);
+  info('③ 槽位补齐 → 自动重跑（event: run_start → stage ×14）');
+  await typeBot('参数齐了，我重跑一遍。这次明确度 94%，能进检索了。', 40);
+  html(`<div class="progress"><div class="p-h">重跑中 · event: stage</div><div id="plines"></div></div>`);
+  const pl = document.getElementById('plines');
+  const lines = [
+    ['S03 拆解（↺ 第 2 轮）','run',0],['S04 关键词 ×24','done',160],
+    ['S05 明确度 94% ✓','done',120],['S07 检索第 1 轮：历史 0 条','done',300],
+    ['S10 置信度 62.6% < 70%','loop',200],['S11 调参：放开行业过滤','loop',180],
+    ['S07 检索第 2 轮：历史 3 条','done',280],['S10 置信度 77.1% ✓','done',150],
+    ['S13 三规则出价 89.0 / 125.8 / 121.9 万','done',200],
+    ['S14 分歧 29% → 中位数 121.9 万','done',150],['S15 毛利 35.5% ≥ 15% ✓','done',120],
+  ];
+  for (const [t,st,d] of lines){
+    pl.insertAdjacentHTML('beforeend',`<div class="pline ${st}"><i></i>${t}</div>`);
+    scrollChat(); await sleep(d);
+  }
+  renderTrace(18, new Set(['S07','S10'])); scrollTrace();
+
+  // ④ 出报价单
+  await sleep(400);
+  info('④ 出报价单 → 转人工复核（S18 是流程里唯一的人工闸门）');
+  html(`<div class="quote"><div class="q-no">event: quote · 报价单 Q-20261018-0xx · 规则版本 w_v3</div>
+      <div class="q-price">121.9 <small>万元 · 85.6 人天 · 1.42 万/人天</small></div>
+      <div class="q-row"><span>毛利率 35.5%（下限 15%）</span><span>置信度 77.1%</span></div>
+      <div class="q-row"><span>三规则分歧 29%，按中位数取价</span><span class="badge b-amber">需商务判断</span></div>
+      <div class="q-row"><span>主参考：中远新材 · 供应商协同门户（覆盖率 67%）</span><span>↺ 本轮经历 2 次回环</span></div></div>`);
+  await typeBot('建议价 121.9 万。分歧超过 20% 我没取平均，取的中位数——这条要商务再看一眼。你确认后出正式单。', 40);
+
+  info('演示完成。全程数字由 CODE 节点产出；LLM 只负责追问话术、槽位抽取与解读。');
+  document.getElementById('play').disabled=false; playing=false;
+}
+
+function reset(){
+  document.getElementById('chat').innerHTML='';
+  renderTrace(0);
+  document.getElementById('stepInfo').textContent='演示案例：星野数字 QR-2026-002（原文只有 80 字，缺规模 / 模式 / 交期 / 预算）';
+  document.getElementById('play').disabled=false; playing=false;
+}
+
+renderPool(); renderTrace(0);
+document.getElementById('play').onclick=play;
+document.getElementById('reset').onclick=reset;
+</script>
+</body>
+</html>
